@@ -1,8 +1,9 @@
+<% include ./header.ejs %>
 
 
 <div class="container">
 
-<h1><header>Mentor Sign up Form</header></h1>
+<h1><header>User Sign up Form</header></h1>
 <br><br>
 <form method="post" action="/signup">
   <div class="form-group">
@@ -21,12 +22,12 @@
 
   <div class="form-group">
     <label for="user_sign_up">Email</label>
-    <input type="email" name="email" class="form-control" id="user_sign_up" placeholder="Email">
+    <input type="email" name="email" class="form-control" id="email" placeholder="Email">
   </div>
 
   <div class="form-group">
     <label for="user_sign_up">Location</label>
-    <input name="location" type="text" class="form-control" id="user_sign_up" placeholder="San Francisco, Ca.">
+    <input name="location" type="text" class="form-control" id="location" placeholder="San Francisco, Ca.">
   </div>
   <div class="form-group">
     <label for="user_sign_up">Occupation</label>
@@ -39,22 +40,22 @@
   </div>
   <div class="form-group">
     <label for="user_sign_up">Limelight Objective</label>
-    <input name="limelight_objective" type="text" class="form-control" id="limelight_objective" placeholder="Please enter your limelight objective.">
+    <input name="limelightObjective" type="text" class="form-control" id="limelight_objective" placeholder="Please enter your limelight objective.">
   </div>
 
   <div class="form-group">
-    <label for="exampleTextarea">Bio</label>
-    <textarea name="bio" class="form-control" id="exampleTextarea" rows="3"></textarea>
+    <label for="user_sign_up">Bio</label>
+    <textarea name="bio" class="form-control" id="bio" rows="3"></textarea>
   </div>
 
   <div class="form-group">
     <label for="user_sign_up">Password</label>
-    <input name="password" type="text" class="form-control" id="Password" placeholder="Please enter your Password.">
+    <input name="password" type="text" class="form-control" id="password" placeholder="Please enter your Password.">
   </div>
 
   <div class="form-group">
-    <label for="exampleInputFile">File input</label>
-    <input name="image" type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
+    <label for="user_sign_up">File input</label>
+    <input name="image" type="file" class="form-control-file" id="image" aria-describedby="fileHelp">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
@@ -62,3 +63,4 @@
 <div class="container">
 <!-- <%# include ./footer/footer %> -->
 </div>
+<script src="../main.js"></script>

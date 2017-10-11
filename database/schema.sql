@@ -8,7 +8,7 @@ CREATE DATABASE theaandrproject;
 DROP TABLE IF EXISTS musicpros;
 CREATE TABLE musicpros(
 id SERIAL PRIMARY KEY,
-username VARCHAR(30) NOT NULL,
+username VARCHAR(30) NOT NULL UNIQUE,
 password TEXT,
 occupation TEXT,
 limelightObjective TEXT,
@@ -18,13 +18,15 @@ image BYTEA,
 email TEXT,
 age INTEGER,
 location TEXT,
-bio TEXT
+bio TEXT,
+user_sid TEXT UNIQUE
 );
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users(
 id SERIAL PRIMARY KEY,
 username VARCHAR(30) NOT NULL,
+messages TEXT,
 password TEXT,
 occupation TEXT,
 limelightObjective TEXT,
@@ -34,7 +36,8 @@ image BYTEA,
 email TEXT,
 age INTEGER,
 location TEXT,
-bio TEXT
+bio TEXT,
+user_sid TEXT UNIQUE
 );
 
 DROP TABLE IF EXISTS artists;
@@ -50,17 +53,19 @@ image BYTEA,
 email TEXT,
 age INTEGER,
 location TEXT,
-bio TEXT
+bio TEXT,
+user_sid TEXT UNIQUE
 );
 
--- DROP TABLE IF EXISTS messages;
--- CREATE TABLE messages(
--- id SERIAL PRIMARY KEY,
--- title VARCHAR(35),
--- message TEXT,
--- sender INTEGER REFERENCES Users(id),
--- reciever INTEGER REFERENCES Users(id)
--- );
+DROP TABLE IF EXISTS messages;
+CREATE TABLE messages(
+id SERIAL PRIMARY KEY,
+message TEXT,
+sender TEXT REFERENCES users(user_sid),
+reciever TEXT REFERENCES users(user_sid),
+created_at TIMESTAMP DEFAULT NOW(),
+updated_at TIMESTAMP DEFAULT NOW()
+);
 
 -- DROP TABLE IF EXISTS mentorship;
 -- CREATE TABLE mentorship(
