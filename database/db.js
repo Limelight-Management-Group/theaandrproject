@@ -53,8 +53,19 @@ const mqueries = {
       .catch(console.log)
   },
   findAllPostByUser(sender){
+    console.log('this is the sender', sender)
     return db.any(`SELECT message FROM messages WHERE sender = $1`, [sender.sender]);
+  },
+  findUserAndAllUserPosts(users){
+    // console.log('the UserObject', users)
+    let result = db.any(`SELECT username, password, message, created_at, updated_at FROM users 
+      JOIN messages 
+      ON users.user_sid = messages.sender
+      WHERE username = $1`, users.username)
+    // console.log(result, '<-----')
+    return result
   }
 };
-
+// mqueries.findUserAndAllUserPosts('s:dtzPVP7pXTYc3NDj_Ih2v_R9svhe-bVO.GLJqmyUyUuOMk30XP67RyoSVLJvpxpfnSu9NbW2InHc')
+// .then(posts=>console.log('these are posts--->', posts))
 module.exports = mqueries;

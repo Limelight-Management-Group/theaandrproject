@@ -83,8 +83,9 @@ app.use( session( {
   resave: true,
   saveUninitialized: true,
   cookie: {
-    expires: 600000
+    expires: 600000,
   }
+  // cookie.messages =  AlluserMessages
 } ) );
 //This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
@@ -92,8 +93,8 @@ app.use( session( {
 app.use((req, res, next) => {
     // console.log('req.cookies::', req.cookies)
     if (req.cookies.user_sid && req.session) {
-        console.log('id check')
-
+        console.log('<-id check->')
+        // console.log('<-',req.session)
         res.clearCookie('user_sid');
 
         next();        
@@ -104,15 +105,21 @@ app.use((req, res, next) => {
 });
 console.log('made it to the sessionChecker')
 // middleware function to check for logged-in users
+let userMessagesArray = []
 var sessionChecker = (req, res, next) => {
     if (req.cookies.user_sid) {
+// console.log(userMessagesArray, '<--userMessagesArray')
       let value = req.cookies.user_sid
       let newValue = req.cookies
       let userSessionInfo = []
-      console.log('newValue', newValue)
-      console.log(value, '<------request')
+      let userMessages = userMessagesArray
+      let userMessagesArray1 = []
+
+      // console.log('newValue', newValue)
+      let parsedMessages = userMessages
+      console.log(userMessagesArray1, '<------PARSEDMessages')
         // console.log('this is the sessionChecker')
-        res.render('users/profile', {userSessionInfo, value});
+        res.render('users/profile', {userSessionInfo, value, userMessagesArray});
 
         next();
     } else {
@@ -121,12 +128,12 @@ var sessionChecker = (req, res, next) => {
     }    
 };
 
-app.post('/profile', (req, res) => {
+app.post('/profile', sessionChecker, (req, res) => {
     // console.log('this is the logins req.body!!!!!! ', req.body)
     queries.getOneuser(req.body)
     .then( user => {
       console.log('THIS IS VALUE', value)
-    console.log('this is the value of user: ', user)
+    console.log('this is the value of userMessagesArray: ', userMessagesArray)
     // console.log(user,'<---userOBJ')   
     }).then(
       queries.findAllPostByUser(req.cookies.user_sid)
@@ -137,10 +144,11 @@ app.post('/profile', (req, res) => {
 )
 })
 app.get('/profile', sessionChecker, (req, res) => {
-    var user_id = req.session.cookie.user_id
+    var user_id = req.session.cookie
+    console.log(user, '<------------<<<')
     queries.findAllPostByUser(user_id)
     .then((messages => {
-        console.log('---><------', messages)
+        console.log('---><------', user_sid)
         // console.log('this is the user_id', user_id)
         // console.log('this is the value of user: ', req.session)
         res.render('profile', {userId: user_id});
@@ -181,7 +189,7 @@ app.get('/', (req, res) =>{
 
 let messagesArr = [];
 app.post('/user_profile_post', (req, res) =>{
-  // console.log('the postpost', req.body.message)
+  console.log('the USER', req.cookies.user_sid)
   let user = userIdArr[0].user_sid
   let usersPost = req.body.user_post
   // console.log('----->the user', user)
@@ -240,7 +248,7 @@ app.get('/login', (req, res) => {
   queries.getAll()
   .then((users)=>{
 
-    // console.log('this is the session Checker', users.messages)
+    console.log('this is the session Checker', userMessagesArray)
     // console.log(userIdArr)
         res.render(__dirname + '/views/login.ejs');
   })
@@ -251,29 +259,37 @@ app.post('/login', sessionChecker, (req, res) => {
         console.log('the user_sid', user_sid) 
       // console.log('sent the post')
         var user = req.body
-        // console.log('user', user)
+        console.log('user', user)
        //  console.log('username', user.username)
-
        // console.log('this is the req.body: ', req.body)
-       queries.getOneuser(user)
-        .then(user => {
-             // console.log('the user.username',user.username)
+       console.log('this is the user_sidb4', user_sid)
+       queries.findUserAndAllUserPosts(user)
+        .then(userAndPosts => {
+             // console.log('the userAndPosts', userAndPosts)
+             console.log('user_sid', user_sid)
              // console.log('req.body.username', req.body.username)
              // console.log('user.password', user.password)
              // console.log('req.body.password', req.body.password)
-              // console.log(mentee.menteename)
+              console.log('userMessagages---->>>>>', userAndPosts[0])
+              userAndPosts.forEach((message)=>{
+                console.log('you pushed me', message)
+                  // userMessagesArray.push(message)
+                  userMessagesArray1.push(message)
+              })
             if (( user.username === req.body.username && user.password === req.body.password)){
+            let AllOfUserPosts = []
+             // console.log(userMessagesArray, '<---AllOfUserPosts')
                 // document.cookie = `username = ${user.username}`
                 // console.log("yo! You're logged-in!!!!")
                 // console.log('this is the user object', {user})
                 var image = user.image
 
-                    // console.log('user--->', user)
+                    console.log('user--->', userMessagesArray)
                     req.session.user = user
                     let user_sid = req.session.user.user_sid
                     // console.log('this is the user_sid from session--->', user_sid)
                     let userObject = req.session.user
-                    // let sessionSid = user.user_sid.user_sid.user_sid
+                    let userAndPosts = user.user_sid.user_sid.user_sid
                     // console.log(userObject, '<--------------userObject')
                     sessionSid = {user}
                     // console.log('<---->', sessionSid) 
@@ -281,8 +297,8 @@ app.post('/login', sessionChecker, (req, res) => {
                     // console.log('useIdArr--->>',userIdArr[0])
                     sessionSid = {user}
                     // console.log(user, '<---------------user')
-                    // console.log(sessionSid, '<---------sessionSid')
-                    res.render('users/profile', {user_sid, user, userObject} );
+                    console.log(userAndPosts, 'userAndPosts')
+                    res.redirect('users/profile', {user_sid, user, userObject, userMessagesArray: userMessagesArray});
                 // })
           } else {
                 console.log('I did not login!!!')
@@ -290,7 +306,7 @@ app.post('/login', sessionChecker, (req, res) => {
                 res.redirect('/');
           }
             
-        }).catch(console.log)
+        })
     });
 
 let port = 3000
