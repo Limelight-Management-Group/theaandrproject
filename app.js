@@ -106,9 +106,11 @@ app.use((req, res, next) => {
 console.log('made it to the sessionChecker')
 // middleware function to check for logged-in users
 let userMessagesArray = []
+var userIdArr1 = [];
+console.log('userIdArr1', userIdArr1)
 var sessionChecker = (req, res, next) => {
     if (req.cookies.user_sid) {
-// console.log(userMessagesArray, '<--userMessagesArray')
+console.log(req.cookies.user_sid, '<--userMessagesArray')
       let value = req.cookies.user_sid
       let newValue = req.cookies
       let userSessionInfo = []
@@ -118,8 +120,13 @@ var sessionChecker = (req, res, next) => {
       // console.log('newValue', newValue)
       let parsedMessages = userMessages
       console.log(userMessagesArray1, '<------PARSEDMessages')
-        // console.log('this is the sessionChecker')
+      console.log('da req.cookies--->', req.cookies.user_sid)
+      queries.findUserAndAllUserPostsById(req.cookies.user_sid)
+      .then((post)=>{
+        console.log('DAPOST------>>>..>', post)
+        
         res.render('users/profile', {userSessionInfo, value, userMessagesArray});
+      })
 
         next();
     } else {
@@ -130,7 +137,7 @@ var sessionChecker = (req, res, next) => {
 
 app.post('/profile', sessionChecker, (req, res) => {
     // console.log('this is the logins req.body!!!!!! ', req.body)
-    queries.getOneuser(req.body)
+    queries.findUserAndAllUserPosts(users)
     .then( user => {
       console.log('THIS IS VALUE', value)
     console.log('this is the value of userMessagesArray: ', userMessagesArray)
@@ -146,12 +153,12 @@ app.post('/profile', sessionChecker, (req, res) => {
 app.get('/profile', sessionChecker, (req, res) => {
     var user_id = req.session.cookie
     console.log(user, '<------------<<<')
-    queries.findAllPostByUser(user_id)
+    queries.findUserAndAllUserPostsById(user_sid)
     .then((messages => {
         console.log('---><------', user_sid)
         // console.log('this is the user_id', user_id)
         // console.log('this is the value of user: ', req.session)
-        res.render('profile', {userId: user_id});
+        res.render('profile', { user: messages, userId: user_id});
         
     }) )
     console.log('these are the req.params: ', req.params)
@@ -190,9 +197,9 @@ app.get('/', (req, res) =>{
 let messagesArr = [];
 app.post('/user_profile_post', (req, res) =>{
   console.log('the USER', req.cookies.user_sid)
-  let user = userIdArr[0].user_sid
+  let user = userIdArr
   let usersPost = req.body.user_post
-  // console.log('----->the user', user)
+  console.log('----->the user', user)
   // console.log('the user_profile_post', req)
   let post = {}
   let allUserMessages = {}
@@ -215,7 +222,7 @@ app.post('/user_profile_post', (req, res) =>{
   // console.log('just making sure!<<<<<>>>><<>><>:', )
   queries.creatNewPost(post)
   .then(post =>{
-    console.log('this is POST---->>>>>>>>>>>>>>>>>', userIdArr[0].user.user_sid )
+    console.log('this is POST---->>>>>>>>>>>>>>>>>', post )
   })
   res.render('users/profile', {user, allUserMessages})
 })
@@ -256,6 +263,7 @@ app.get('/login', (req, res) => {
 });
 app.post('/login', sessionChecker, (req, res) => {
         let user_sid = req.cookies.user_sid
+        userIdArr1.push(user_sid)
         console.log('the user_sid', user_sid) 
       // console.log('sent the post')
         var user = req.body
@@ -272,9 +280,9 @@ app.post('/login', sessionChecker, (req, res) => {
              // console.log('req.body.password', req.body.password)
               console.log('userMessagages---->>>>>', userAndPosts[0])
               userAndPosts.forEach((message)=>{
-                console.log('you pushed me', message)
+                // console.log('you pushed me', message)
                   // userMessagesArray.push(message)
-                  userMessagesArray1.push(message)
+                  userMessagesArray.push(message)
               })
             if (( user.username === req.body.username && user.password === req.body.password)){
             let AllOfUserPosts = []
@@ -283,21 +291,28 @@ app.post('/login', sessionChecker, (req, res) => {
                 // console.log("yo! You're logged-in!!!!")
                 // console.log('this is the user object', {user})
                 var image = user.image
-
-                    console.log('user--->', userMessagesArray)
-                    req.session.user = user
+                    // userMessagagesArray[0].forEach((message)=>{
+                    //   console.log('this is the message', message)  
+                    // })
+                    for(let i = 0; i < userMessagesArray.length; i++){
+                      console.log('user--->>', userMessagesArray[i])  
+                    }
+                    var messageOnPage = userMessagesArray[0]
+                    console.log('MESSAGE ON PAGE:', messageOnPage)
+                    req.session.user = userAndPosts[0]
+                    console.log('SANITY CHECKKK------------------------->', req)
                     let user_sid = req.session.user.user_sid
                     // console.log('this is the user_sid from session--->', user_sid)
                     let userObject = req.session.user
                     let userAndPosts = user.user_sid.user_sid.user_sid
-                    // console.log(userObject, '<--------------userObject')
+                    console.log(userObject, '<--------------userObject')
                     sessionSid = {user}
                     // console.log('<---->', sessionSid) 
                     userIdArr.push(userObject)
                     // console.log('useIdArr--->>',userIdArr[0])
                     sessionSid = {user}
                     // console.log(user, '<---------------user')
-                    console.log(userAndPosts, 'userAndPosts')
+                    console.log(messageOnPage, 'userAndPosts')
                     res.redirect('users/profile', {user_sid, user, userObject, userMessagesArray: userMessagesArray});
                 // })
           } else {

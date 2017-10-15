@@ -16,7 +16,12 @@
 </form>
 
 
-<%= {userMessagesArray} %>
+     
+     <% for(message of userMessagesArray){ %>
+      <%= message.message %>
+     <%}%>  
+
+
 <%#= valueCheck %>
 
 
