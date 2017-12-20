@@ -15,7 +15,7 @@ const mqueries = {
     return db.any('SELECT * FROM users');
   },
   create(user) {
-    console.log('this is the user', user)
+    // console.log('this is the user', user)
     return db.any(`
       INSERT INTO users(username, password, f_name, l_name, email, occupation, limelightObjective, image, location, age, bio, user_sid) 
       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
@@ -40,9 +40,9 @@ const mqueries = {
     console.log("this is the result: ", result)
     return result
   },
-  findOneUser(user){
+  findOneUser(username){
     console.log('this is the user', user)
-    return db.one('SELECT * FROM users WHERE user_sid = $1', [user.user_sid]);
+    return db.one('SELECT * FROM users WHERE user_sid = $1', username);
   }, 
   creatNewPost(post){
     // console.log('post from user', post.message)
@@ -56,25 +56,31 @@ const mqueries = {
     console.log('this is the sender', sender)
     return db.any(`SELECT message FROM messages WHERE sender = $1`, [sender.sender]);
   },
-  findUserAndAllUserPosts(users){
-    // console.log('the UserObject', users)
-    let result = db.any(`SELECT username, password, message, created_at, updated_at FROM users 
+  findUserAndAllUserPosts(username){
+    // console.log('the UserObject', username)
+    let result = db.any(`SELECT * users 
       JOIN messages 
-      ON users.user_sid = messages.sender
-      WHERE username = $1`, users.username)
+      ON users.id = messages.sender
+      WHERE users.username = $1`, username)
     // console.log(result, '<-----')
     return result
   },
-    findUserAndAllUserPostsById(user_sid){
+    findUserById(user_sid){
     console.log('the UserObject', user_sid)
-    let result = db.any(`SELECT username, password, message, created_at, updated_at FROM users 
-      JOIN messages 
-      ON users.user_sid = messages.sender
-      WHERE messages.sender = $1`, user_sid)
+    let result = db.any(`SELECT username, user_sid FROM users 
+      WHERE user.user_sid = $1`, user_sid)
     // console.log(result, '<-----')
     return result
+  },
+  updateUserUid(user_uid, username){
+    // console.log(user_uid)
+    let result = db.none('UPDATE users SET user_sid = $1 WHERE username = $2', [user_uid, username])
   }
 };
-// mqueries.findUserAndAllUserPostsById('s:dtzPVP7pXTYc3NDj_Ih2v_R9svhe-bVO.GLJqmyUyUuOMk30XP67RyoSVLJvpxpfnSu9NbW2InHc')
-// .then(posts=>console.log('these are posts--->', posts))
+let user = {}
+user.username = user;
+user.user_sid = 's:dtzPVP7pXTYc3NDj_Ih2v_R9svhe-bVO.GLJqmyUyUuOMk30XP67RyoSVLJvpxpfnSu9NbW2InHc'
+// console.log(user)
+mqueries.findUserById('s:kKk5h3G-KbzN_M2Zh8htyJk8U_W_Zfpo.vVuqruK/UaQ4MIENFLtxbJC7soiENiOpxENaNU/9Q4s')
+.then(posts=>console.log('these are posts--->', posts))
 module.exports = mqueries;

@@ -1,6 +1,6 @@
 <% include ../header.ejs %>
 <h1>This is the check</h1>
-<div> 
+<div class="container"> 
 <form method="post" action="/user_profile_post">
 
   <div class="form-group">
@@ -15,11 +15,21 @@
   <button type="submit" id="user_post_submit" class="btn btn-primary">Submit</button>
 </form>
 
+    <%#= userObj.user_uid #%>
+     <%# if (userMessagesArray){#%>
 
-     
-     <% for(message of userMessagesArray){ %>
-      <%= message.message %>
-     <%}%>  
+     <%# for(message of userMessagesArray){ #%>
+     <div class="container">
+        <div class="well">
+           <%#= message.message #%>
+           <br>
+           <b>By:</b> <%#= message.username #%>
+           <br>
+           <b>Created At:</b> <%#= message.created_at #%>
+        </div>
+      </div>
+     <%#}#%>
+     <%#}#%>  
 
 
 <%#= valueCheck %>

@@ -25,7 +25,7 @@ user_sid TEXT UNIQUE
 DROP TABLE IF EXISTS users;
 CREATE TABLE users(
 id SERIAL PRIMARY KEY,
-username VARCHAR(30) NOT NULL,
+username VARCHAR(30) NOT NULL UNIQUE,
 messages TEXT,
 password TEXT,
 occupation TEXT,
@@ -43,7 +43,7 @@ user_sid TEXT UNIQUE
 DROP TABLE IF EXISTS artists;
 CREATE TABLE artists(
 id SERIAL PRIMARY KEY,
-username VARCHAR(30) NOT NULL,
+username VARCHAR(30) NOT NULL UNIQUE,
 password TEXT,
 occupation TEXT,
 limelightObjective TEXT,
@@ -61,8 +61,8 @@ DROP TABLE IF EXISTS messages;
 CREATE TABLE messages(
 id SERIAL PRIMARY KEY,
 message TEXT,
-sender TEXT REFERENCES users(user_sid),
-reciever TEXT REFERENCES users(user_sid),
+sender TEXT REFERENCES users(username),
+reciever TEXT REFERENCES users(username),
 created_at TIMESTAMP DEFAULT NOW(),
 updated_at TIMESTAMP DEFAULT NOW()
 );
